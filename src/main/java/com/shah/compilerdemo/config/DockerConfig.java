@@ -1,4 +1,4 @@
-package com.shah.compilerdemo;
+package com.shah.compilerdemo.config;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import java.time.Duration;
 
 @Configuration
-public class MyConfig {
+public class DockerConfig {
 
     private String dockerUri = "tcp://localhost:2375";
 

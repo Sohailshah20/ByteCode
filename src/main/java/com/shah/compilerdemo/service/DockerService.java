@@ -1,4 +1,4 @@
-package com.shah.compilerdemo;
+package com.shah.compilerdemo.service;
 
 
 import com.github.dockerjava.api.DockerClient;
@@ -8,25 +8,22 @@ import com.github.dockerjava.api.command.WaitContainerResultCallback;
 import com.github.dockerjava.api.model.*;
 import com.github.dockerjava.core.command.LogContainerResultCallback;
 import org.springframework.stereotype.Service;
-
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class CompileService {
+public class DockerService {
 
     private final DockerClient dockerClient;
+    private final FileOperationsService fileService;
 
     private final String imageId = "a3562aa0b991";
     private final String javaFilePath = "E:/temp/";
     private final String classPath = "E:/temp/Hello.class";
 
-    public CompileService(DockerClient dockerClient) {
+    public DockerService(DockerClient dockerClient, FileOperationsService fileService) {
         this.dockerClient = dockerClient;
+        this.fileService = fileService;
     }
 
     public List<String> runCommandInContainer() {
@@ -41,35 +38,11 @@ public class CompileService {
         }
         return imageNames;
     }
-
-    public String formatCode(String code) {
-        StringBuilder fullcode = new StringBuilder("class Hello {");
-        fullcode.append(code);
-        fullcode.append("}");
-        String fileName = "Hello.java";
-        File newFile = new File("E:/temp/Hello.java");
-        try {
-            if (!newFile.exists()) {
-                newFile.createNewFile();
-            }
-            System.out.println("*********************************" + fullcode);
-            FileWriter writer = new FileWriter(newFile);
-            BufferedWriter bufferedWriter = new BufferedWriter(writer);
-
-            bufferedWriter.write(fullcode.toString());
-
-            bufferedWriter.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return compileCode("javac Hello.java");
-    }
-
-    public String compileCode(String command) {
+        public String compileCode(String fileName) {
         StringBuilder stdout = new StringBuilder();
         StringBuilder stderr = new StringBuilder();
         try {
-            CreateContainerResponse sh = createAndStartContainer(command);
+            CreateContainerResponse sh = createAndStartContainer("javac "+fileName);
 
             dockerClient.startContainerCmd(sh.getId()).exec();
 
@@ -85,20 +58,26 @@ public class CompileService {
         }
         if (stderr.toString().isEmpty()) {
             System.out.println("*******************ERROR MESSAGE STRING " + stderr.toString());
-            return runProgram("java Hello");
+            return runProgram("java "+subFileName(fileName));
         } else {
-            deleteFile(javaFilePath, "Hello.java", null);
+            fileService.deleteFile(javaFilePath, "Hello.java", null);
             System.out.println("*******************RETURNING COMPILE ERROR");
             return stderr.toString();
         }
     }
 
-    public String runProgram(String command) {
+    private String subFileName(String fileName) {
+        int dotIndex = fileName.lastIndexOf(".");
+        return fileName.substring(0, dotIndex);
+
+    }
+
+    public String runProgram(String fileName) {
         System.out.println("*******************IN THE RUN METHOD");
         StringBuilder stdout = new StringBuilder();
         StringBuilder stderr = new StringBuilder();
         try {
-            CreateContainerResponse sh = createAndStartContainer(command);
+            CreateContainerResponse sh = createAndStartContainer("java "+fileName);
 
             dockerClient.startContainerCmd(sh.getId()).exec();
 
@@ -113,10 +92,10 @@ public class CompileService {
             throw new RuntimeException(e);
         }
         if (!stderr.toString().isEmpty()) {
-            deleteFile(javaFilePath, "Hello.java", "Hello.class");
+            fileService.deleteFile(javaFilePath, "Hello.java", "Hello.class");
             return stderr.toString();
         } else {
-            deleteFile(javaFilePath, "Hello.java", "Hello.class");
+            fileService.deleteFile(javaFilePath, "Hello.java", "Hello.class");
             return stdout.toString();
         }
     }
@@ -165,22 +144,5 @@ public class CompileService {
             }
         };
         return logCallback;
-    }
-
-    private void deleteFile(String filePath, String filename, String compiledFileName) {
-        File file1 = new File(filePath, filename);
-
-        if (file1.exists()) {
-            boolean delete = file1.delete();
-            if (delete) System.out.println("***************************** FILE DELETED");
-        }
-        if (compiledFileName != null) {
-            File file2 = new File(filePath, compiledFileName);
-            System.out.println("***************************** FILE 2" + file2);
-            if (file2.exists()) {
-                boolean delete = file2.delete();
-                if (delete) System.out.println("***************************** COMPILED FILE DELETED");
-            }
-        }
     }
 }
