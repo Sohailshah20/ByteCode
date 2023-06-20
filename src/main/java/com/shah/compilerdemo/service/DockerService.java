@@ -19,8 +19,8 @@ public class DockerService {
     private final FileOperationsService fileService;
 
     private final String imageId = "9761a8b85d89";
-    private final String javaFilePath = "E:/temp/";
-    private final String classPath = "E:/temp/Hello.class";
+    private final String javaFilePath = "/home/ec2-user/code/";
+    private final String classPath = "/home/ec2-user/code/Hello.class";
 
     public DockerService(DockerClient dockerClient, FileOperationsService fileService) {
         this.dockerClient = dockerClient;

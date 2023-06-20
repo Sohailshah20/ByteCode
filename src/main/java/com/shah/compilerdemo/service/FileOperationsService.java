@@ -12,7 +12,7 @@ public class FileOperationsService {
     public File saveFile(String code) {
         StringBuilder fullcode = formatCode(code);
         String fileName = "Hello.java";
-        File newFile = new File("E:/temp/Hello.java");
+        File newFile = new File("/home/ec2-user/code/Hello.java");
         try {
             if (!newFile.exists()) {
                 newFile.createNewFile();
