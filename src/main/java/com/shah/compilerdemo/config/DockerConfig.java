@@ -14,7 +14,7 @@ import java.time.Duration;
 @Configuration
 public class DockerConfig {
 
-    private String dockerUri = "tcp://localhost:2375";
+    private String dockerUri = "unix:///var/run/docker.sock";
 
     @Bean
     public  DockerClient initializeDockerClient() {
