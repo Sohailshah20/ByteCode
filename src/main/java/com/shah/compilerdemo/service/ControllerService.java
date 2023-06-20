@@ -1,7 +1,8 @@
 package com.shah.compilerdemo.service;
 
 import com.shah.compilerdemo.model.CodeMessage;
-import org.jvnet.hk2.annotations.Service;
+import com.shah.compilerdemo.rabbit.MessageProducer;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 
@@ -9,17 +10,16 @@ import java.io.File;
 public class ControllerService {
 
     private final FileOperationsService fileService;
-    private final DockerService dockerService;
-    private final MessageService messageService;
+    private final MessageProducer messageService;
 
-    public ControllerService(FileOperationsService fileService, DockerService dockerService, MessageService messageService) {
+    public ControllerService(FileOperationsService fileService, DockerService dockerService, MessageProducer messageService) {
         this.fileService = fileService;
-        this.dockerService = dockerService;
         this.messageService = messageService;
     }
 
-    public void runCode(String code){
+    public String runCode(String code){
         File file = fileService.saveFile(code);
-        messageService.addCodeToQueue(new CodeMessage(file));
+        Object o = messageService.addCodeToQueue(new CodeMessage(file));
+        return o.toString();
     }
 }

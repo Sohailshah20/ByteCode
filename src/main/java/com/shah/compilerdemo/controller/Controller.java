@@ -3,8 +3,6 @@ package com.shah.compilerdemo.controller;
 import com.shah.compilerdemo.service.ControllerService;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/")
 public class Controller {
@@ -20,10 +18,15 @@ public class Controller {
 //    }
 
     @PostMapping("/run")
-    public void saveFile(
+    public String saveFile(
             @RequestParam(name = "code") String code
     ){
-         controllerService.runCode(code);
+         return controllerService.runCode(code);
+    }
+
+    @GetMapping("/hello")
+    public String hello(){
+        return "App is running";
     }
 
 }

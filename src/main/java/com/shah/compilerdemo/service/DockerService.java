@@ -8,6 +8,7 @@ import com.github.dockerjava.api.command.WaitContainerResultCallback;
 import com.github.dockerjava.api.model.*;
 import com.github.dockerjava.core.command.LogContainerResultCallback;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +18,7 @@ public class DockerService {
     private final DockerClient dockerClient;
     private final FileOperationsService fileService;
 
-    private final String imageId = "a3562aa0b991";
+    private final String imageId = "9761a8b85d89";
     private final String javaFilePath = "E:/temp/";
     private final String classPath = "E:/temp/Hello.class";
 
@@ -58,7 +59,8 @@ public class DockerService {
         }
         if (stderr.toString().isEmpty()) {
             System.out.println("*******************ERROR MESSAGE STRING " + stderr.toString());
-            return runProgram("java "+subFileName(fileName));
+            System.out.println("*******************SUB FILE NAME " + subFileName(fileName));
+            return runProgram(subFileName(fileName));
         } else {
             fileService.deleteFile(javaFilePath, "Hello.java", null);
             System.out.println("*******************RETURNING COMPILE ERROR");
@@ -73,7 +75,7 @@ public class DockerService {
     }
 
     public String runProgram(String fileName) {
-        System.out.println("*******************IN THE RUN METHOD");
+        System.out.println("*******************FILE NAME: " + fileName);
         StringBuilder stdout = new StringBuilder();
         StringBuilder stderr = new StringBuilder();
         try {

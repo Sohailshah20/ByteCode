@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  amazoncorretto:
+    container_name: javajdk
+    hostname: my-jdk
+    image: amazoncorretto:17-alpine
+
+  rabbitmq:
+    container_name: my-rabbitmq
+    hostname: rabbitmq
+    image: rabbitmq:3-management-alpine
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    expose:
+      - 5672
+      - 15672
+    restart: unless-stopped

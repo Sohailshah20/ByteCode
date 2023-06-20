@@ -1,6 +1,6 @@
 package com.shah.compilerdemo.service;
 
-import org.jvnet.hk2.annotations.Service;
+import org.springframework.stereotype.Service;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -29,8 +29,10 @@ public class FileOperationsService {
     }
 
     private static StringBuilder formatCode(String code) {
-        StringBuilder fullcode = new StringBuilder("class Hello {");
+        StringBuilder fullcode = new StringBuilder("class Hello {\n " +
+                "public static void main(String[] args){\n");
         fullcode.append(code);
+        fullcode.append("}\n");
         fullcode.append("}");
         return fullcode;
     }
