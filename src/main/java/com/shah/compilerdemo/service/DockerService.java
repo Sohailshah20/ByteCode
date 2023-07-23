@@ -18,7 +18,7 @@ public class DockerService {
     private final DockerClient dockerClient;
     private final FileOperationsService fileService;
 
-    private final String imageId = "9761a8b85d89";
+    private final String imageId = "7549c9699da1";
     private final String javaFilePath = "/home/ec2-user/code/";
     private final String classPath = "/home/ec2-user/code/Hello.class";
 
